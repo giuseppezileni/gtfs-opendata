@@ -1,0 +1,21 @@
+{
+  "name": "gtfs-opendata",
+  "version": "1.0.0",
+  "description": "GTFS Data for open community",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "opendata",
+    "gtfs"
+  ],
+  "author": "Giuseppe Zileni",
+  "license": "MIT"
+}
