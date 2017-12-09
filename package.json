@@ -1,21 +1,67 @@
 {
-  "name": "gtfs-opendata",
-  "version": "1.0.0",
+  "_from": "gtfs-opendata@^1.0.0",
+  "_id": "gtfs-opendata@1.0.0",
+  "_inBundle": false,
+  "_integrity": "sha512-H2AxGQoeE2auZQJmW0In6cbgBq1SQvfm3G+174AIYk5P1PXS41ym+Bp3BWYG5z06vrTuzJFf/6L5U1gzth/MGQ==",
+  "_location": "/gtfs-opendata",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "gtfs-opendata@^1.0.0",
+    "name": "gtfs-opendata",
+    "escapedName": "gtfs-opendata",
+    "rawSpec": "^1.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^1.0.0"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/gtfs-opendata/-/gtfs-opendata-1.0.0.tgz",
+  "_shasum": "47d4bc72a2f1ad6657467291de08b164dc91d38c",
+  "_spec": "gtfs-opendata@^1.0.0",
+  "_where": "/Users/gzileni/Git/APIHive",
+  "author": {
+    "name": "Giuseppe Zileni"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "csv": "^2.0.0",
+    "extract-zip": "^1.6.6",
+    "fs-extra": "^4.0.3",
+    "http": "0.0.0",
+    "lodash": "^4.17.4",
+    "moment": "^2.18.1",
+    "mongodb": "^2.2.30",
+    "mongoose": "^4.11.3",
+    "mongoose-beautiful-unique-validation": "^6.0.0",
+    "mongoose-delete": "^0.4.0",
+    "mongoose-validator": "^1.3.2",
+    "node-fetch": "^1.7.3",
+    "path": "^0.12.7",
+    "proj4": "^2.4.4",
+    "request": "^2.83.0",
+    "url": "^0.11.0"
+  },
+  "deprecated": false,
   "description": "GTFS Data for open community",
-  "main": "index.js",
+  "devDependencies": {},
   "directories": {
     "lib": "lib",
     "test": "test"
-  },
-  "dependencies": {},
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "opendata",
     "gtfs"
   ],
-  "author": "Giuseppe Zileni",
-  "license": "MIT"
+  "license": "MIT",
+  "main": "index.js",
+  "name": "gtfs-opendata",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.0"
 }

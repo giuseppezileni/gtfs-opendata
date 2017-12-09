@@ -1,9 +1,8 @@
 const _ = require('lodash');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const moment = require('moment');
 const utils = require('./lib/utils');
-
-const { forEach } = require('p-iteration');
+const db = require('./lib/db');
 
 // ***********************************************
 // GTFS import script
@@ -15,14 +14,13 @@ module.exports.import = importGTFS;
 // ***********************************************
 // Database Scripts
 // ***********************************************
-
+/*
 const open_db = async (url) => {
 
     console.log('connect mongodb: ' + url);
 
     mongoose.connect(url, {
       useMongoClient: true,
-      /* other options */
     });
 
     mongoose.Promise = require('bluebird');
@@ -33,6 +31,7 @@ const close_db = async () => {
 	  console.log('Mongoose connection disconnected');
 	});
 };
+*/
 
 // ***********************************************
 // Methods
@@ -42,8 +41,9 @@ const close_db = async () => {
 module.exports.stops = (url, query = {}) => {
 
   console.log('url: -> ' + url);
-  open_db(url);
-  var error_data = false;
+
+  db.open(url);
+
   var stops_dropped;
 
 	if (query.route_id !== undefined) {
@@ -61,9 +61,9 @@ module.exports.stops = (url, query = {}) => {
 		  tripQuery.direction_id = query.direction_id;
 		};
 
-    const trips =  Trip.find(tripQuery).select(
-		// const trips =  await Trip.find(tripQuery).select(
-		  {trip_id: 1,
+    const trips =  db.Trip.find(tripQuery).select(
+		  {
+        trip_id: 1,
 		    direction_id: 1}
 		);
 
@@ -74,7 +74,7 @@ module.exports.stops = (url, query = {}) => {
 		const stoptimesList = [];
 
 		for (const trip of trips) {
-      const stoptimes = StopTime.find({
+      const stoptimes = models.StopTime.find({
       // const stoptimes = await StopTime.find({
 		    agency_key: query.agency_key,
 		    trip_id: trip.trip_id
@@ -103,7 +103,7 @@ module.exports.stops = (url, query = {}) => {
 		delete query.direction_id;
 
     // exec query
-    var q = Stop.find();
+    var q = db.Stop.find();
     console.log('query executed ... find without params');
 
     q
@@ -126,13 +126,10 @@ module.exports.stops = (url, query = {}) => {
       })
       .then(function () {
         console.log('close database');
-        close_db();
-        error_data = false;
+        db.close();
       })
       .catch(function(err) {
         console.log('error database');
-        // query.res.status(500).json(err);
-        error_data = true;
     });
 
 	};
@@ -157,7 +154,7 @@ module.exports.stops = (url, query = {}) => {
 
     return new Promise((resolve, reject) => {
 
-      var q = Stop
+      var q = db.Stop
         .where('loc')
         .near([lon, lat])
         .maxDistance(utils.milesToDegrees(radius));
@@ -184,7 +181,7 @@ module.exports.stops = (url, query = {}) => {
           })
           .then(function () {
             console.log('close database');
-            close_db();
+            db.close();
           })
           .catch(function(err) {
             console.log('error database');
@@ -199,7 +196,7 @@ module.exports.stops = (url, query = {}) => {
 // agencies
 module.exports.agencies = async (url, query = {}) => {
 
-  open_db(url);
+  db.open(url);
 
   if (query.within !== undefined) {
     if (!query.within.lat || !query.within.lon) {
@@ -212,7 +209,7 @@ module.exports.agencies = async (url, query = {}) => {
       radius = 500;
     }
 
-    var q = Agency
+    var q = db.Agency
       .where('agency_center')
       .near([lon, lat])
       .maxDistance(utils.milesToDegrees(radius));
@@ -221,15 +218,13 @@ module.exports.agencies = async (url, query = {}) => {
       .then(function(agencies) {
         console.log('get agencies n.' + _.size(agencies));
         console.log('Agencies: ' + JSON.stringify(agencies));
-        query.res.status(200).json(agencies);
       })
       .then(function () {
         console.log('close database');
-        close_db();
+        db.close();
       })
       .catch(function(err) {
         console.log('error database');
-        query.res.status(500).json(err);
     });
   }
 
@@ -237,13 +232,13 @@ module.exports.agencies = async (url, query = {}) => {
 
 module.exports.trips = async (url, query = {}) => {
 
-  open_db(url);
+  db.open(url);
 
   const q = {
     trip_id: query.trip_id
   };
 
-  var q1 = Trip
+  var q1 = db.Trip
     .find(q);
 
   q1
@@ -253,18 +248,17 @@ module.exports.trips = async (url, query = {}) => {
     })
     .then(function () {
       console.log('close database');
-      close_db();
+      db.close();
     })
     .catch(function(err) {
       console.log('error database');
-      query.res.status(500).json(err);
   });
 
 };
 
 module.exports.stoptimes = async (url, query = {}) => {
 
-  open_db(url);
+  db.open(url);
 
   if (query.agency_key === 'undefined') {
     throw new Error('`agency_key` is a required parameter.');
@@ -300,7 +294,7 @@ module.exports.stoptimes = async (url, query = {}) => {
       delete query.direction_id;
     }
 
-    const tripIds = await Trip.find(tripQuery).distinct('trip_id');
+    const tripIds = await db.Trip.find(tripQuery).distinct('trip_id');
 
     q.trip_id = {
       $in: tripIds
@@ -314,7 +308,7 @@ module.exports.stoptimes = async (url, query = {}) => {
 
   console.log('Now -> ' + now);
 
-  var q1 = StopTime
+  var q1 = db.StopTime
     .find(q)
     .where('arrival_time').gt(now)
     .sort(
@@ -326,18 +320,12 @@ module.exports.stoptimes = async (url, query = {}) => {
     q1
       .then(function(stoptimes) {
         console.log('get stoptimes n.' + _.size(stoptimes));
-        // console.log('StopTimes: ' + JSON.stringify(stoptimes));
-
-        query.res.status(200).json(stoptimes);
       })
       .then(function () {
         console.log('close database');
-        close_db();
+        db.close();
       })
       .catch(function(err) {
         console.log('error database');
-        query.res.status(500).json(err);
     });
 };
-
-module.exports = require('./lib/gtfs');
